@@ -1,0 +1,280 @@
+@import "tailwindcss";
+
+/* ------------------------------------------------------------------ *
+   Firdosh Marble Arts — design tokens
+   A stone atelier's palette: limestone grounds, ink line, clay accent.
+ * ------------------------------------------------------------------ */
+
+/* `static` keeps every token emitted. Without it Tailwind v4 tree-shakes
+   variables it cannot see referenced, and any `var(--text-*)` used from
+   plain CSS (e.g. .micro) would silently resolve to nothing. */
+@theme static {
+  --color-bone: #f2ede3;
+  --color-shell: #e8e0d1;
+  --color-sand: #d8c9ad;
+  --color-clay: #9c4a2b;
+  --color-clay-deep: #7d3a20;
+  --color-moss: #434c3a;
+  --color-umber: #5b4f41;
+  --color-ink: #16130f;
+
+  --font-display: var(--font-fraunces), "Iowan Old Style", Georgia, serif;
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+
+  /* The hero sits in a 7-of-12 column, so its size has to track the
+     column, not the viewport. At 12vw the second line ("white marble.")
+     outgrew the track and ran underneath the photograph between about
+     1280px and 1600px. 7.6vw keeps the line inside the track at every
+     width from 390px to 2560px. */
+  --text-hero: clamp(2.75rem, 7.6vw, 9.75rem);
+  --text-display: clamp(2.25rem, 6.4vw, 6.5rem);
+  --text-title: clamp(1.9rem, 4.2vw, 3.75rem);
+  --text-lead: clamp(1.0625rem, 1.55vw, 1.4rem);
+  --text-micro: 0.6875rem;
+
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out-quart: cubic-bezier(0.76, 0, 0.24, 1);
+}
+
+/* ------------------------------------------------------------------ *
+   Base
+ * ------------------------------------------------------------------ */
+
+@layer base {
+  *,
+  *::before,
+  *::after {
+    border-color: color-mix(in oklab, var(--color-ink) 14%, transparent);
+  }
+
+  html {
+    scroll-behavior: smooth;
+    /* `scrollbar-gutter: stable` was reserving a permanent strip down the
+       right edge even on platforms whose scrollbar floats over the content,
+       which read as a dead margin. This page is always far taller than the
+       viewport, so `overflow-y: scroll` gives the same guarantee against
+       layout shift without the reserved strip. */
+    overflow-y: scroll;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background-color: var(--color-bone);
+    /* Grain is a static background layer on the body, not a fixed
+       overlay. A position:fixed + mix-blend-mode pseudo-element forces
+       the compositor to re-blend the whole viewport on every scroll
+       frame, which is the single easiest way to make a page stutter. */
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E");
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-weight: 400;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    overflow-x: clip;
+  }
+
+  ::selection {
+    background-color: var(--color-clay);
+    color: var(--color-bone);
+  }
+
+  :focus-visible {
+    outline: 1px solid var(--color-clay);
+    outline-offset: 3px;
+  }
+
+  /* Display type: tight, optical, never a default sans look. */
+  .display {
+    font-family: var(--font-display);
+    font-weight: 400;
+    line-height: 0.92;
+    letter-spacing: -0.028em;
+    font-variation-settings: "opsz" 96, "WONK" 1;
+    text-wrap: balance;
+  }
+
+  .display-tight {
+    font-family: var(--font-display);
+    line-height: 0.86;
+    letter-spacing: -0.035em;
+    font-variation-settings: "opsz" 144, "WONK" 1;
+  }
+
+  /* Eyebrow / label micro-type used throughout. */
+  .micro {
+    font-family: var(--font-sans);
+    font-size: var(--text-micro);
+    font-weight: 500;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    line-height: 1;
+  }
+
+  .numeral {
+    font-family: var(--font-display);
+    font-variation-settings: "opsz" 72, "WONK" 0;
+    font-weight: 300;
+    letter-spacing: -0.04em;
+  }
+
+  /* Hairline used to open almost every section. */
+  .rule {
+    height: 1px;
+    background-color: color-mix(in oklab, var(--color-ink) 16%, transparent);
+  }
+}
+
+/* ------------------------------------------------------------------ *
+   Scroll reveal
+ * ------------------------------------------------------------------ */
+
+@layer components {
+  /* Hidden initial states are gated on `.js` so that a failed script or a
+     crawler without JS still sees the full page rather than blank boxes. */
+  .js [data-reveal] {
+    opacity: 0;
+    transform: translate3d(0, 1.35rem, 0);
+    transition:
+      opacity 0.9s var(--ease-out-expo),
+      transform 0.9s var(--ease-out-expo);
+    transition-delay: var(--reveal-delay, 0ms);
+  }
+
+  .js [data-reveal="in"] {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* Images wipe open from the bottom. The clip MUST live on a descendant:
+     a `clip-path` on the observed element itself drives its intersection
+     ratio to 0, so the observer would never report it as visible. */
+  .js [data-reveal-img] .media {
+    clip-path: inset(0 0 100% 0);
+    transition: clip-path 1.1s var(--ease-out-expo);
+    transition-delay: var(--reveal-delay, 0ms);
+  }
+
+  .js [data-reveal-img="in"] .media {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+/* Clipped image wrapper — also reserves its background before decode.
+   NOTE: do not put `content-visibility: auto` on any ancestor of a
+   [data-reveal] element. It starves the IntersectionObserver — the
+   skipped subtree reports ratio 0 and, because IO only re-fires on
+   threshold crossings, the reveal never triggers and the content stays
+   permanently invisible. */
+.media {
+  background-color: var(--color-shell);
+}
+
+/* ------------------------------------------------------------------ *
+   Marquee
+ * ------------------------------------------------------------------ */
+
+@keyframes ks-marquee {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+.marquee-track {
+  display: flex;
+  width: max-content;
+  animation: ks-marquee var(--marquee-duration, 38s) linear infinite;
+}
+
+.marquee-track--reverse {
+  animation-direction: reverse;
+}
+
+.marquee:hover .marquee-track {
+  animation-play-state: paused;
+}
+
+/* ------------------------------------------------------------------ *
+   Link underline that draws in from the left
+ * ------------------------------------------------------------------ */
+
+.link-draw {
+  position: relative;
+  display: inline-block;
+}
+
+.link-draw::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -0.12em;
+  width: 100%;
+  height: 1px;
+  background-color: currentColor;
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform 0.5s var(--ease-out-expo);
+}
+
+.link-draw:hover::after,
+.link-draw:focus-visible::after {
+  transform: scaleX(1);
+  transform-origin: left;
+}
+
+/* ------------------------------------------------------------------ *
+   Field styling
+ * ------------------------------------------------------------------ */
+
+/* `currentColor` so a field inherits whatever tone its section sets. */
+.field {
+  width: 100%;
+  background-color: transparent;
+  border: 0;
+  border-bottom: 1px solid color-mix(in oklab, currentColor 24%, transparent);
+  padding: 0.7rem 0;
+  font-family: var(--font-sans);
+  font-size: 0.9375rem;
+  color: currentColor;
+  transition: border-color 0.35s var(--ease-out-expo);
+}
+
+.field::placeholder {
+  color: color-mix(in oklab, currentColor 38%, transparent);
+}
+
+.field:focus {
+  outline: none;
+  border-bottom-color: var(--color-clay);
+}
+
+/* ------------------------------------------------------------------ *
+   Motion preferences
+ * ------------------------------------------------------------------ */
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+
+  /* Force every reveal to its final state; !important because the base
+     hidden state is more specific than a bare attribute selector. */
+  .js [data-reveal],
+  .js [data-reveal-img] .media {
+    opacity: 1 !important;
+    transform: none !important;
+    clip-path: none !important;
+  }
+}
