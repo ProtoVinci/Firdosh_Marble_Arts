@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
+import { PHONE_HREF, STUDIO, whatsappLink } from "@/lib/content";
 
 const COMMISSIONS = [
   "House / temple mandir",
@@ -28,56 +29,99 @@ type Tone = "light" | "dark";
  * text colours on every input.
  */
 export function EnquiryForm({ tone = "dark" }: { tone?: Tone }) {
-  const [sent, setSent] = useState(false);
+  // The WhatsApp link the enquiry was composed into, once submitted.
+  const [waLink, setWaLink] = useState<string | null>(null);
 
   const label = tone === "dark" ? "text-bone/45" : "text-ink/50";
   const arrow = tone === "dark" ? "text-bone/40" : "text-ink/40";
   const quiet = tone === "dark" ? "text-bone/45" : "text-ink/45";
   const lead = tone === "dark" ? "text-umber" : "text-umber";
 
+  /**
+   * There is no backend or inbox to post to — the invoice carries a phone
+   * number and nothing else — so the enquiry is composed into a WhatsApp
+   * message to that number. Previously this swallowed the form and showed
+   * "recorded", which silently lost every lead.
+   */
   function onSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    // Wire this to the studio's inbox / CRM when the backend exists.
-    setSent(true);
+    const data = new FormData(e.currentTarget);
+    const get = (k: string) => String(data.get(k) ?? "").trim();
+
+    const location = get("location");
+    const notes = get("notes");
+    const lines = [
+      `Enquiry from the ${STUDIO.name} website`,
+      "",
+      `Name: ${get("name")}`,
+      `Contact: ${get("contact")}`,
+      `Looking for: ${get("commission")}`,
+      `Stone: ${get("stone")}`,
+      `Height: ${get("scale")}`,
+      ...(location ? [`Location: ${location}`] : []),
+      `Timeline: ${get("timeline")}`,
+      ...(notes ? ["", `About the space: ${notes}`] : []),
+    ];
+
+    const link = whatsappLink(lines.join("\n"));
+    setWaLink(link);
+    window.open(link, "_blank", "noopener,noreferrer");
   }
 
-  if (sent) {
-    return (
+  const confirmation = waLink && (
       <div
+        role="status"
         className={`flex flex-col items-start gap-6 border p-10 sm:p-14 ${
           tone === "dark" ? "border-bone/20" : "border-ink/15"
         }`}
       >
-        <span className="micro text-clay">Sent</span>
+        <span className="micro text-clay">Almost done</span>
         <p className="display max-w-[24ch] text-[2rem] sm:text-[2.75rem]">
-          Thank you. Your enquiry has been recorded.
+          Your enquiry is ready in WhatsApp.
         </p>
         <p className={`max-w-[46ch] ${lead}`}>
-          If it is urgent, call the workshop on{" "}
-          <a href="tel:+919929000106" className="link-draw">
-            +91 99290 00106
+          Press send in WhatsApp to deliver it — nothing reaches us until you
+          do. If it did not open, use the button below, or call the workshop on{" "}
+          <a href={PHONE_HREF} className="link-draw">
+            {STUDIO.phones[0]}
           </a>
           .
         </p>
-        <button
-          type="button"
-          onClick={() => setSent(false)}
-          className={`micro link-draw ${tone === "dark" ? "text-bone/70 hover:text-bone" : "text-ink/70 hover:text-ink"}`}
-        >
-          Send another enquiry
-        </button>
+        <div className="flex flex-wrap items-center gap-x-8 gap-y-4">
+          <a
+            href={waLink}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="micro inline-flex items-center gap-3 bg-ink px-6 py-4 text-bone transition-colors duration-300 hover:bg-clay"
+          >
+            Open WhatsApp
+          </a>
+          <button
+            type="button"
+            onClick={() => setWaLink(null)}
+            className={`micro link-draw ${tone === "dark" ? "text-bone/70 hover:text-bone" : "text-ink/70 hover:text-ink"}`}
+          >
+            Edit enquiry
+          </button>
+        </div>
       </div>
-    );
-  }
+  );
 
   return (
-    <form onSubmit={onSubmit} className="flex flex-col gap-x-10 gap-y-9">
+    <>
+    {confirmation}
+    <form
+      onSubmit={onSubmit}
+      hidden={!!waLink}
+      className="flex flex-col gap-x-10 gap-y-9"
+    >
       <div className="grid gap-9 sm:grid-cols-2">
         <Field label="Name" name="name" autoComplete="name" required labelClass={label} />
         <Field
-          label="Email or phone"
+          label="Phone or email"
           name="contact"
           autoComplete="tel"
+          inputMode="tel"
           required
           labelClass={label}
         />
@@ -135,7 +179,8 @@ export function EnquiryForm({ tone = "dark" }: { tone?: Tone }) {
 
       <div className="flex flex-wrap items-center justify-between gap-6 pt-2">
         <p className={`max-w-[38ch] text-[0.8125rem] leading-relaxed ${quiet}`}>
-          Site photographs help more than anything else you can write here.
+          This opens WhatsApp with your details filled in. Site photographs help
+          more than anything else — attach them there.
         </p>
         <button
           type="submit"
@@ -145,7 +190,7 @@ export function EnquiryForm({ tone = "dark" }: { tone?: Tone }) {
               : "bg-ink text-bone hover:bg-clay"
           }`}
         >
-          Send enquiry
+          Send on WhatsApp
           <span
             aria-hidden
             className="inline-block transition-transform duration-500 ease-[var(--ease-out-expo)] group-hover:translate-x-1"
@@ -155,6 +200,7 @@ export function EnquiryForm({ tone = "dark" }: { tone?: Tone }) {
         </button>
       </div>
     </form>
+    </>
   );
 }
 
@@ -163,11 +209,20 @@ type FieldProps = {
   name: string;
   placeholder?: string;
   autoComplete?: string;
+  inputMode?: "tel" | "text";
   required?: boolean;
   labelClass: string;
 };
 
-function Field({ label, name, placeholder, autoComplete, required, labelClass }: FieldProps) {
+function Field({
+  label,
+  name,
+  placeholder,
+  autoComplete,
+  inputMode,
+  required,
+  labelClass,
+}: FieldProps) {
   return (
     <label className="flex flex-col gap-3">
       <span className={`micro ${labelClass}`}>{label}</span>
@@ -175,6 +230,7 @@ function Field({ label, name, placeholder, autoComplete, required, labelClass }:
         name={name}
         placeholder={placeholder}
         autoComplete={autoComplete}
+        inputMode={inputMode}
         required={required}
         className="field"
       />

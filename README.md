@@ -88,6 +88,52 @@ Six things were deliberately done to keep it smooth:
    `package-lock.json` in the home directory, and prints a warning on every
    build.
 
+### Smoothness pass (latest)
+
+- **Hero paints without waiting for React.** Above-the-fold text uses a CSS
+  `animation` (`.hero-in`) and the hero photograph has no reveal at all, so
+  the first frame no longer depends on hydration.
+- **Image reveals animate `opacity`/`transform` only.** The old `clip-path`
+  wipe repainted a full-width photograph on the main thread every frame.
+- **Images are WebP, capped at 1080px, quality 68, cached for a year**
+  (`next.config.ts`). The default ladder upscaled 700–1000px sources to
+  1920px, and AVIF encoding on first request was the slowest thing the
+  server did.
+- **Works viewer keeps visited frames mounted** and loads two rows ahead, so
+  moving up and down the list never flashes blank.
+- **Marquees pause while off screen.**
+- **The enquiry form hands off to WhatsApp** (the only channel on the
+  invoice) instead of discarding the message. Replace `onSubmit` in
+  `EnquiryForm.tsx` with a real endpoint once an inbox exists.
+- **Mobile call / WhatsApp / quote bar** (`ContactBar.tsx`).
+
+Dev mode (`npm run dev`) is always much slower than production; judge speed
+on `startup.bat` option 1. Keeping the project inside OneDrive also slows
+builds and dev reloads because every `.next` and `node_modules` file is
+synced; a folder outside OneDrive (or excluding those two folders) is faster.
+
+### Installable app (PWA)
+
+- `src/app/manifest.ts` — name, colours, standalone display, icons, and two
+  home-screen shortcuts (quote, visit).
+- `public/icons/*` and `src/app/apple-icon.png` — generated from the site
+  mark by `node scripts/make-icons.cjs` (re-run it if the mark changes).
+- `public/sw.js` — hand-written service worker, no dependency. HTML is
+  network-first with a 3.5 s timeout then the saved copy, so the site opens
+  on a weak signal or offline; `/_next/static` is cache-first (content-hashed);
+  photographs are stale-while-revalidate, capped at 60. **Bump `VERSION` in
+  `sw.js` to force every visitor onto fresh caches.**
+- `PwaRegister` registers the worker in production only (a worker in `next dev`
+  caches stale hot-reload chunks). Test PWA behaviour with `startup.bat`
+  option 1; installing needs HTTPS or `localhost`.
+- `InstallApp` shows an "Install app" link in the footer and mobile menu when
+  the browser offers it, or an Add-to-Home-Screen hint on iOS. It renders
+  nothing once installed.
+- Mobile: `viewport-fit=cover` with safe-area padding (notches, home bar),
+  16 px form fields (stops iOS focus-zoom), coarse-pointer hit areas on text
+  links, 44 px menu button. Checked for horizontal overflow at 320, 360, 390
+  and 768 px.
+
 ### Running it
 
 `startup.bat` is the way to run the site on this machine. Double-click it:

@@ -71,8 +71,25 @@
     line-height: 1.6;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    text-rendering: optimizeLegibility;
     overflow-x: clip;
+    /* Notched phones in landscape, and installed-app mode. */
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* No rubber-band bounce revealing the page background in the installed
+     app, and no double-tap zoom delay on controls. */
+  html {
+    overscroll-behavior-y: none;
+  }
+
+  a,
+  button,
+  summary,
+  select,
+  [role="button"] {
+    touch-action: manipulation;
   }
 
   ::selection {
@@ -135,10 +152,10 @@
      crawler without JS still sees the full page rather than blank boxes. */
   .js [data-reveal] {
     opacity: 0;
-    transform: translate3d(0, 1.35rem, 0);
+    transform: translate3d(0, 1rem, 0);
     transition:
-      opacity 0.9s var(--ease-out-expo),
-      transform 0.9s var(--ease-out-expo);
+      opacity 0.65s var(--ease-out-expo),
+      transform 0.65s var(--ease-out-expo);
     transition-delay: var(--reveal-delay, 0ms);
   }
 
@@ -147,17 +164,37 @@
     transform: none;
   }
 
-  /* Images wipe open from the bottom. The clip MUST live on a descendant:
-     a `clip-path` on the observed element itself drives its intersection
-     ratio to 0, so the observer would never report it as visible. */
+  /* Images fade and settle. Only opacity and transform are animated, so
+     the browser runs it on the compositor. The previous clip-path wipe
+     repainted a full-width photograph on the main thread every frame. */
   .js [data-reveal-img] .media {
-    clip-path: inset(0 0 100% 0);
-    transition: clip-path 1.1s var(--ease-out-expo);
+    opacity: 0;
+    transform: translate3d(0, 1rem, 0);
+    transition:
+      opacity 0.7s var(--ease-out-expo),
+      transform 0.7s var(--ease-out-expo);
     transition-delay: var(--reveal-delay, 0ms);
   }
 
   .js [data-reveal-img="in"] .media {
-    clip-path: inset(0 0 0 0);
+    opacity: 1;
+    transform: none;
+  }
+
+  /* Above-the-fold entrance. Pure CSS so the hero paints as soon as the
+     stylesheet arrives instead of waiting for React to hydrate and flip a
+     data attribute. `backwards` holds the start state during the delay and
+     leaves no inline state behind afterwards. */
+  .hero-in {
+    animation: ks-hero-in 0.7s var(--ease-out-expo) backwards;
+    animation-delay: var(--reveal-delay, 0ms);
+  }
+}
+
+@keyframes ks-hero-in {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 1rem, 0);
   }
 }
 
@@ -194,7 +231,8 @@
   animation-direction: reverse;
 }
 
-.marquee:hover .marquee-track {
+.marquee:hover .marquee-track,
+.marquee[data-offscreen] .marquee-track {
   animation-play-state: paused;
 }
 
@@ -205,6 +243,16 @@
 .link-draw {
   position: relative;
   display: inline-block;
+}
+
+/* Touch screens: the visible link is often a single 11px line of text.
+   Extend its hit area without changing layout. */
+@media (pointer: coarse) {
+  .link-draw::before {
+    content: "";
+    position: absolute;
+    inset: -0.8rem -0.5rem;
+  }
 }
 
 .link-draw::after {
@@ -238,8 +286,10 @@
   border-bottom: 1px solid color-mix(in oklab, currentColor 24%, transparent);
   padding: 0.7rem 0;
   font-family: var(--font-sans);
-  font-size: 0.9375rem;
+  /* 16px: anything smaller makes iOS Safari zoom the page on focus. */
+  font-size: 1rem;
   color: currentColor;
+  border-radius: 0;
   transition: border-color 0.35s var(--ease-out-expo);
 }
 
@@ -275,6 +325,9 @@
   .js [data-reveal-img] .media {
     opacity: 1 !important;
     transform: none !important;
-    clip-path: none !important;
+  }
+
+  .hero-in {
+    animation: none;
   }
 }

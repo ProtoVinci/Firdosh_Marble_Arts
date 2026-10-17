@@ -36,6 +36,18 @@ export function WorksIndex({ items }: { items: readonly Work[] }) {
 
   const active = hovered ?? focused ?? spied;
 
+  // Frames that have been mounted stay mounted. Unmounting a photograph the
+  // reader has already seen meant re-decoding it, and a blank flash, every
+  // time they moved back up the list. The window reaches two rows ahead so
+  // the next frame has finished loading before the crossfade gets to it.
+  const [mounted, setMounted] = useState<ReadonlySet<number>>(() => new Set([0, 1, 2]));
+  const wanted = [active - 1, active, active + 1, active + 2].filter(
+    (i) => i >= 0 && i < items.length,
+  );
+  if (wanted.some((i) => !mounted.has(i))) {
+    setMounted(new Set([...mounted, ...wanted]));
+  }
+
   // Scroll-spy: whichever row is nearest the middle of the viewport wins.
   useEffect(() => {
     const rows = rowRefs.current.filter(Boolean) as HTMLButtonElement[];
@@ -107,10 +119,9 @@ export function WorksIndex({ items }: { items: readonly Work[] }) {
           {items.map((item, i) => {
             // The twelve frames are stacked in one box, so the browser's
             // lazy-load heuristic counts every one of them as visible and
-            // fires twelve requests at once. Mounting only a window around
-            // the active row keeps it to two, and the next frame is already
-            // in place before the crossfade reaches it.
-            if (Math.abs(i - active) > 1) return null;
+            // would fire twelve requests at once. Only frames the reader
+            // has reached, or is about to, are mounted.
+            if (!mounted.has(i)) return null;
             return (
               <div
                 key={item.image}
@@ -122,6 +133,7 @@ export function WorksIndex({ items }: { items: readonly Work[] }) {
                   src={item.image}
                   alt={item.alt}
                   fill
+                  quality={68}
                   sizes="(max-width: 1024px) 100vw, 56vw"
                   className="object-cover"
                 />
@@ -129,10 +141,10 @@ export function WorksIndex({ items }: { items: readonly Work[] }) {
             );
           })}
           <div className="pointer-events-none absolute inset-x-0 bottom-0 flex items-end justify-between p-5 sm:p-7">
-            <span className="micro bg-ink/70 px-3 py-2 text-bone backdrop-blur-sm">
+            <span className="micro bg-ink/75 px-3 py-2 text-bone">
               {String(active + 1).padStart(2, "0")} / {String(items.length).padStart(2, "0")}
             </span>
-            <span className="micro bg-ink/70 px-3 py-2 text-bone backdrop-blur-sm">
+            <span className="micro bg-ink/75 px-3 py-2 text-bone">
               {items[active].tag}
             </span>
           </div>

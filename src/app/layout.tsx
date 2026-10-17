@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Fraunces, Inter } from "next/font/google";
+import { PwaRegister } from "@/components/PwaRegister";
 import "./globals.css";
 
 const display = Fraunces({
@@ -47,11 +48,21 @@ export const metadata: Metadata = {
     siteName: "Firdosh Marble Arts",
   },
   robots: { index: true, follow: true },
+  applicationName: "Firdosh Marble Arts",
+  appleWebApp: {
+    capable: true,
+    title: "Firdosh Marble",
+    statusBarStyle: "default",
+  },
+  // The GSTIN is a long digit string; stop iOS turning it into a phone link.
+  formatDetection: { telephone: false },
 };
 
 export const viewport: Viewport = {
   themeColor: "#f2ede3",
   colorScheme: "light",
+  // Lets env(safe-area-inset-*) report real values on notched phones.
+  viewportFit: "cover",
 };
 
 export default function RootLayout({
@@ -70,7 +81,10 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{ __html: 'document.documentElement.classList.add("js")' }}
         />
       </head>
-      <body className="antialiased">{children}</body>
+      <body className="antialiased">
+        {children}
+        <PwaRegister />
+      </body>
     </html>
   );
 }

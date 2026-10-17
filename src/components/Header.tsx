@@ -1,12 +1,13 @@
 "use client";
 
-import Link from "next/link";
 import { useEffect, useState } from "react";
 import { STUDIO } from "@/lib/content";
+import { InstallApp } from "./InstallApp";
 import { Mark } from "./Mark";
 
 const NAV = [
   { label: "Mandirs", href: "#mandirs" },
+  { label: "Works", href: "#works" },
   { label: "Fountains", href: "#fountains" },
   { label: "Visit", href: "#visit" },
   { label: "Enquire", href: "#enquire" },
@@ -25,8 +26,14 @@ export function Header() {
 
   useEffect(() => {
     document.body.style.overflow = open ? "hidden" : "";
+    if (!open) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setOpen(false);
+    };
+    window.addEventListener("keydown", onKey);
     return () => {
       document.body.style.overflow = "";
+      window.removeEventListener("keydown", onKey);
     };
   }, [open]);
 
@@ -40,9 +47,11 @@ export function Header() {
         }`}
       >
         <div className="mx-auto flex h-[4.5rem] w-full max-w-[156rem] items-center justify-between px-5 sm:px-8 lg:px-10 xl:px-12 2xl:px-16">
-          <Link
+          {/* A plain anchor: next/link to a hash made the router prefetch
+              the current route's RSC payload twice on every load. */}
+          <a
             href="#top"
-            className="group flex items-center gap-2.5"
+            className="group flex items-center gap-2.5 py-2"
             onClick={() => setOpen(false)}
           >
             <Mark className="h-6 w-6 shrink-0 text-clay transition-transform duration-700 ease-[var(--ease-out-expo)] group-hover:rotate-180" />
@@ -52,7 +61,7 @@ export function Header() {
               </span>
               <span className="micro mt-1 text-ink/50">{STUDIO.descriptor}</span>
             </span>
-          </Link>
+          </a>
 
           <nav className="hidden items-center gap-9 lg:flex">
             {NAV.map((item) => (
@@ -79,7 +88,7 @@ export function Header() {
               onClick={() => setOpen((v) => !v)}
               aria-expanded={open}
               aria-controls="mobile-nav"
-              className="micro flex h-10 w-10 items-center justify-center lg:hidden"
+              className="micro -mr-2 flex h-11 w-11 items-center justify-center lg:hidden"
             >
               <span className="sr-only">{open ? "Close menu" : "Open menu"}</span>
               <span className="relative block h-3 w-5">
@@ -106,14 +115,14 @@ export function Header() {
           open ? "visible opacity-100" : "invisible opacity-0"
         }`}
       >
-        <div className="flex h-full flex-col justify-between px-5 pt-28 pb-10 sm:px-8">
+        <div className="flex h-full flex-col justify-between gap-8 overflow-y-auto px-5 pt-24 pb-[max(2.5rem,env(safe-area-inset-bottom))] sm:px-8 sm:pt-28">
           <nav className="flex flex-col">
             {NAV.map((item, i) => (
               <a
                 key={item.href}
                 href={item.href}
                 onClick={() => setOpen(false)}
-                className="display border-b border-ink/12 py-5 text-[2.6rem] transition-all duration-700 ease-[var(--ease-out-expo)]"
+                className="display border-b border-ink/12 py-4 text-[2.25rem] transition-all sm:py-5 sm:text-[2.6rem] duration-700 ease-[var(--ease-out-expo)]"
                 style={{
                   transitionDelay: open ? `${120 + i * 70}ms` : "0ms",
                   transform: open ? "none" : "translateY(1.5rem)",
@@ -128,10 +137,11 @@ export function Header() {
           <div className="flex flex-col gap-1 text-ink/60">
             <span className="micro mb-3 max-w-[30ch] text-ink/40">{STUDIO.residence}</span>
             {STUDIO.phones.map((p) => (
-              <a key={p} href={`tel:${p.replace(/\s/g, "")}`} className="link-draw w-fit">
+              <a key={p} href={`tel:${p.replace(/\s/g, "")}`} className="link-draw w-fit py-1">
                 {p}
               </a>
             ))}
+            <InstallApp className="mt-2 text-ink/70" />
           </div>
         </div>
       </div>

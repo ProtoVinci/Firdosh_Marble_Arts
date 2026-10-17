@@ -42,6 +42,7 @@ export function Feature({
           src={item.image}
           alt={item.alt}
           fill
+          quality={68}
           priority={priority}
           sizes={sizes}
           style={{ objectPosition: item.focus ?? "50% 50%" }}
@@ -89,6 +90,7 @@ export function Rail({
                   src={item.image}
                   alt={item.alt}
                   fill
+                  quality={68}
                   priority={priorityFirst && i === 0}
                   sizes="(max-width: 640px) 74vw, (max-width: 1024px) 44vw, 30vw"
                   style={{ objectPosition: item.focus ?? "50% 50%" }}
@@ -126,6 +128,7 @@ export function Trio({ items }: { items: readonly Img[] }) {
                 src={item.image}
                 alt={item.alt}
                 fill
+                quality={68}
                 sizes="(max-width: 640px) 92vw, 30vw"
                 style={{ objectPosition: item.focus ?? "50% 50%" }}
                 className="object-cover transition-transform duration-[1.4s] ease-[var(--ease-out-expo)] hover:scale-[1.03]"

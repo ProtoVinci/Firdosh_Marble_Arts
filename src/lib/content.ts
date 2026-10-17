@@ -20,6 +20,17 @@ export const STUDIO = {
   phones: ["+91 99290 00106"],
 } as const;
 
+/** `tel:` link for the primary invoice number. */
+export const PHONE_HREF = `tel:${STUDIO.phones[0].replace(/\s/g, "")}`;
+
+/** wa.me wants the number as digits only, country code first. */
+export const WHATSAPP_NUMBER = STUDIO.phones[0].replace(/\D/g, "");
+
+export function whatsappLink(message?: string) {
+  const base = `https://wa.me/${WHATSAPP_NUMBER}`;
+  return message ? `${base}?text=${encodeURIComponent(message)}` : base;
+}
+
 export const HERO = {
   eyebrow: "Makrana · Rajasthan",
   lead: "Marble suppliers, handcraft items and temple contractors. Mandirs, jali screens, fountains and carved figures.",

@@ -1,7 +1,9 @@
 import Image from "next/image";
+import { ContactBar } from "@/components/ContactBar";
 import { EnquiryForm } from "@/components/EnquiryForm";
 import { Feature, Rail, Trio } from "@/components/Frames";
 import { Header } from "@/components/Header";
+import { InstallApp } from "@/components/InstallApp";
 import { Marquee } from "@/components/Marquee";
 import { Mark } from "@/components/Mark";
 import { ScrollMotion } from "@/components/ScrollMotion";
@@ -15,6 +17,7 @@ import {
   STUDIO,
   TRADE,
   WORKS,
+  whatsappLink,
 } from "@/lib/content";
 
 /**
@@ -38,20 +41,20 @@ export default function Page() {
     <>
       <ScrollMotion />
       <Header />
+      <ContactBar />
 
       <main id="top">
         {/* ---------------------------------------------------------- Hero */}
         <section className="relative pt-[6rem] lg:pt-[8.5rem]">
           <div className={`${SHELL} grid gap-y-10 lg:items-center lg:grid-cols-12 lg:gap-x-10`}>
             <div className="lg:col-span-7">
-              <div className="flex items-center gap-3" data-reveal>
+              <div className="hero-in flex items-center gap-3">
                 <span className="h-px w-10 bg-clay" />
                 <span className="micro text-ink/55">Makrana · Rajasthan</span>
               </div>
 
               <h1
-                className="display mt-8 text-hero"
-                data-reveal
+                className="hero-in display mt-8 text-hero"
                 style={{ "--reveal-delay": "60ms" } as React.CSSProperties}
               >
                 Cut in
@@ -61,18 +64,16 @@ export default function Page() {
               </h1>
 
               <p
-                className="mt-9 max-w-[36ch] text-lead leading-[1.45] text-umber"
-                data-reveal
-                style={{ "--reveal-delay": "140ms" } as React.CSSProperties}
+                className="hero-in mt-9 max-w-[36ch] text-lead leading-[1.45] text-umber"
+                style={{ "--reveal-delay": "120ms" } as React.CSSProperties}
               >
                 Marble suppliers, handcraft items and temple contractors. Mandirs,
                 jali screens, fountains and carved figures.
               </p>
 
               <div
-                className="mt-10 flex flex-wrap items-center gap-x-6 gap-y-3 sm:gap-x-8 sm:gap-y-4"
-                data-reveal
-                style={{ "--reveal-delay": "200ms" } as React.CSSProperties}
+                className="hero-in mt-10 flex flex-wrap items-center gap-x-6 gap-y-3 sm:gap-x-8 sm:gap-y-4"
+                style={{ "--reveal-delay": "180ms" } as React.CSSProperties}
               >
                 <a
                   href="#enquire"
@@ -93,7 +94,8 @@ export default function Page() {
             </div>
 
             <div className="lg:col-span-5">
-              <figure data-reveal-img className="relative">
+              {/* The LCP image: no reveal, it paints with the first frame. */}
+              <figure className="relative">
                 <div className="media relative aspect-4/5 w-full overflow-hidden bg-shell">
                   <HeroImage />
                 </div>
@@ -345,6 +347,14 @@ export default function Page() {
                       {p}
                     </a>
                   ))}
+                  <a
+                    href={whatsappLink()}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="micro link-draw mt-3 text-ink/70 hover:text-ink"
+                  >
+                    Message on WhatsApp
+                  </a>
                 </div>
               </div>
 
@@ -357,7 +367,7 @@ export default function Page() {
       </main>
 
       {/* ------------------------------------------------------ Footer */}
-      <footer className="border-t border-ink/12 bg-bone pt-16">
+      <footer className="border-t border-ink/12 bg-bone pt-16 pb-[calc(4rem+env(safe-area-inset-bottom))] lg:pb-0">
         <Marquee
           items={MARQUEE_FOOTER}
           duration={46}
@@ -384,6 +394,7 @@ export default function Page() {
             <nav className="flex flex-wrap gap-x-8 gap-y-2">
               {[
                 { label: "Mandirs", href: "#mandirs" },
+                { label: "Works", href: "#works" },
                 { label: "Fountains", href: "#fountains" },
                 { label: "Visit", href: "#visit" },
                 { label: "Enquire", href: "#enquire" },
@@ -405,6 +416,7 @@ export default function Page() {
             </p>
             <p className="micro text-ink/30">GSTIN {STUDIO.gstin}</p>
           </div>
+          <InstallApp className="mt-6 text-ink/60 hover:text-ink" />
         </div>
       </footer>
     </>
@@ -418,6 +430,7 @@ function HeroImage() {
       src={HERO_IMG.image}
       alt={HERO_IMG.alt}
       fill
+      quality={68}
       priority
       fetchPriority="high"
       sizes="(max-width: 1024px) 100vw, 42vw"

@@ -1,18 +1,44 @@
-import path from "node:path";
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   images: {
-    formats: ["image/avif", "image/webp"],
+    // WebP only. AVIF saves ~20% more but costs several times the CPU per
+    // encode, and every image is encoded on first request — on a small
+    // self-hosted box that shows up as slow first loads for each visitor.
+    formats: ["image/webp"],
+    // Most source photographs are 700–1000px wide (the largest is 1600).
+    // The default ladder goes up to 3840px, which made the optimizer
+    // upscale small sources (e.g. w=1920 for a 736px photo) for no gain.
+    deviceSizes: [480, 750, 1080],
+    // 68 is visually indistinguishable on these photographs and ~15% lighter
+    // than the default 75 in WebP.
+    qualities: [68],
+    // Photographs never change under the same filename; keep the encoded
+    // copies for a year instead of the 4-hour default.
+    minimumCacheTTL: 31536000,
   },
   /**
-   * This project sits at C:\Users\Parth\Desktop\Kalamu_Sisodiya\site, so both
-   * of these would otherwise walk all the way up to C:\Users\Parth and pick up
-   * the stray package-lock.json in the home directory, which made every build
-   * print "Next.js ignored package-lock.json ... would include your home
-   * directory". Pinning both to the project folder keeps the root here.
+   * Pin the workspace root to this folder so Next does not walk up the
+   * tree and pick up a stray package-lock.json from a parent directory.
    */
   outputFileTracingRoot: __dirname,
+  async headers() {
+    return [
+      {
+        // The worker must never be served from a stale cache, or a fixed
+        // build would not reach returning visitors.
+        source: "/sw.js",
+        headers: [
+          { key: "Content-Type", value: "application/javascript; charset=utf-8" },
+          { key: "Cache-Control", value: "no-cache, no-store, must-revalidate" },
+        ],
+      },
+      {
+        source: "/icons/:path*",
+        headers: [{ key: "Cache-Control", value: "public, max-age=86400, stale-while-revalidate=604800" }],
+      },
+    ];
+  },
   turbopack: {
     root: __dirname,
   },
