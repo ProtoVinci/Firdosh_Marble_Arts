@@ -41,6 +41,10 @@ Consequences worth knowing about:
 
 ## Performance
 
+> **Historical.** These figures were measured on an earlier build, before
+> the direct-contact redesign. They are kept for reference only and are not a
+> benchmark for the current site; re-measure on the real host and device.
+
 Measured on a production build (`next build && next start`), cold cache:
 
 | | Desktop 1440×900 | Mobile 390×844 |
@@ -90,9 +94,11 @@ Six things were deliberately done to keep it smooth:
 
 ### Smoothness pass (latest)
 
-- **Hero paints without waiting for React.** Above-the-fold text uses a CSS
-  `animation` (`.hero-in`) and the hero photograph has no reveal at all, so
-  the first frame no longer depends on hydration.
+- **Hero paints without waiting for React.** The hero has no entrance
+  animation at all (an earlier `.hero-in` fade was removed because it could
+  stall on a throttled renderer and leave the headline invisible), and the
+  hero photograph has no reveal, so the first frame never depends on
+  hydration.
 - **Image reveals animate `opacity`/`transform` only.** The old `clip-path`
   wipe repainted a full-width photograph on the main thread every frame.
 - **Images are WebP, capped at 1080px, quality 68, cached for a year**
@@ -209,8 +215,7 @@ which is backwards. Section padding was doing most of it:
 - Grid gaps `gap-y-14`/`gap-y-16` → `gap-y-10`/`gap-y-12`.
 - Index rows `py-4` → `py-3.5`, and the gap under the mobile preview `mt-10` →
   `mt-8`.
-- The hero CTA row went to `gap-x-6` so "See the mandirs" sits beside the button
-  instead of wrapping.
+- The hero buttons stack full-width on phones and sit side by side from `sm`.
 
 Result: **8915 px**, down 632 px, and now shorter than desktop rather than longer.
 Average image weight on mobile is ~20 KB because `sizes` hands Next small

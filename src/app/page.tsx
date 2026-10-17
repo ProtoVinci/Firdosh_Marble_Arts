@@ -179,8 +179,8 @@ export default function Page() {
                 </h2>
               </div>
               <p className="max-w-[34ch] text-[0.9375rem] leading-relaxed text-umber" data-reveal>
-                Twelve carved pieces — pierced screens, narrative reliefs,
-                roundels and figures. Move down the list to see each one.
+                Twelve carved pieces — mandirs, jali screens, reliefs and
+                figures. Move down the list to see each one.
               </p>
             </div>
 
@@ -205,8 +205,8 @@ export default function Page() {
                 </h2>
               </div>
               <p className="max-w-[34ch] text-[0.9375rem] leading-relaxed text-umber" data-reveal>
-                Pavilion and wall fountains in carved marble, with elephant and
-                peacock figures around the basin.
+                A tiered pavilion fountain, a fountain with carved fish around
+                its pool, and an inlaid wall fountain.
               </p>
             </div>
 

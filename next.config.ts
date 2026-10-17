@@ -22,6 +22,13 @@ const nextConfig: NextConfig = {
    * tree and pick up a stray package-lock.json from a parent directory.
    */
   outputFileTracingRoot: __dirname,
+  /**
+   * The "N" route badge `next dev` draws in the bottom-left corner sat on
+   * top of the mobile Call / WhatsApp bar and read as part of the site.
+   * Production never shows it; compile and runtime errors still appear
+   * in development with this off.
+   */
+  devIndicators: false,
   async headers() {
     return [
       {

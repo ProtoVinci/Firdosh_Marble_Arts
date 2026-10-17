@@ -94,10 +94,14 @@ export function ScrollMotion() {
       // Anything at or above the bottom edge counts, including elements the
       // reader has already scrolled past: an anchor jump can skip a section
       // entirely, and it must not be blank when they scroll back up.
+      // All geometry reads first, then all reveal writes. Interleaving them
+      // makes every read after a write flush pending style work again.
       const limit = window.innerHeight * 0.94;
+      const due: HTMLElement[] = [];
       for (const el of pending) {
-        if (el.getBoundingClientRect().top < limit) reveal(el);
+        if (el.getBoundingClientRect().top < limit) due.push(el);
       }
+      due.forEach(reveal);
     };
     const onScroll = () => {
       if (queued) return;

@@ -81,7 +81,7 @@ export const MANDIRS: readonly Framed[] = [
   },
   {
     image: "/work/mandir-room.jpg",
-    alt: "Full white marble mandir installed in a panelled room between two windows",
+    alt: "White marble mandir with a carved tree-of-life panel and lit jali side screens, set in a room between two windows",
   },
   {
     image: "/work/mandir-facade.jpg",
@@ -93,7 +93,7 @@ export const MANDIRS: readonly Framed[] = [
   },
   {
     image: "/work/mandir-backlit.jpg",
-    alt: "Carved Om jali panel lit from behind so the pierced work reads as shadow",
+    alt: "White marble mandir wall with a backlit Om medallion and inlaid dark-stone floral motifs",
   },
   {
     image: "/work/mandir-outdoor.jpg",
@@ -101,11 +101,11 @@ export const MANDIRS: readonly Framed[] = [
   },
   {
     image: "/work/mandir-treelife.jpg",
-    alt: "White marble mandir with a tree of life carved into the jali arch",
+    alt: "White marble mandir with carved pillars and arch, and a coloured-stone tree-of-life inlay on the back wall",
   },
   {
     image: "/work/mandir-peacock.jpg",
-    alt: "Carved white marble mandir with a peacock-feather jali fan",
+    alt: "White marble mandir arch with blue-painted peacock figures and an inlaid peacock-feather fan on the back wall",
   },
   {
     image: "/work/mandir-balustrade.jpg",
@@ -113,7 +113,7 @@ export const MANDIRS: readonly Framed[] = [
   },
   {
     image: "/work/mandir-lit.jpg",
-    alt: "Carved marble mandir installed and lit, with idols in place",
+    alt: "Lit white marble mandir with a pierced arch and an Om medallion, idols in place and cabinets below",
   },
 ];
 
@@ -126,12 +126,12 @@ export const FOUNTAINS: readonly Framed[] = [
   },
   {
     image: "/work/elephant-peacock.jpg",
-    alt: "Marble fountain with carved elephant and peacock figures around a blue-tiled pool",
+    alt: "Tiered marble fountain with carved fish figures around a blue-tiled pool",
     focus: "50% 74%",
   },
   {
     image: "/work/wall-panels.jpg",
-    alt: "Three arched marble wall fountains with carved floral relief and basins",
+    alt: "Marble wall fountain with tiered bowls on an inlaid central arch, flanked by two carved floral panels",
   },
 ];
 
@@ -151,27 +151,27 @@ export const WORKS: readonly { image: string; alt: string; title: string; tag: s
   },
   {
     image: "/work/jali-arch.jpg",
-    alt: "Ornate white marble jali arch panel with carved borders",
-    title: "Arched jali with carved border",
-    tag: "Jali",
+    alt: "White marble mandir with carved pillars, a pierced jali arch and an inlaid floral medallion on the back wall",
+    title: "Mandir with pierced jali arch",
+    tag: "Mandir",
   },
   {
     image: "/work/jali-screen.jpg",
-    alt: "Carved marble jali screen with an arched centre panel",
-    title: "Screen with arched centre",
-    tag: "Screen",
+    alt: "White marble mandir with a domed top, a geometric jali screen under a carved arch and three drawers below",
+    title: "Mandir with geometric jali screen",
+    tag: "Jali",
   },
   {
     image: "/work/panel-door.jpg",
-    alt: "Carved marble doorway with a scalloped arch and wooden door",
+    alt: "Carved marble doorway with a scalloped arch, lion figures in niches above and a wooden door",
     title: "Scalloped doorway surround",
     tag: "Doorway",
   },
   {
     image: "/work/panel-om.jpg",
-    alt: "White marble mandir panel with a carved Om and flanking lions",
-    title: "Om with flanking lions",
-    tag: "Panel",
+    alt: "White marble mandir with blue-accented carving on the arch, a sunburst panel behind brass idols and carved drawers below",
+    title: "Mandir with blue-accented arch",
+    tag: "Mandir",
   },
   {
     image: "/work/panel-relief.jpg",
@@ -181,15 +181,15 @@ export const WORKS: readonly { image: string; alt: string; title: string; tag: s
   },
   {
     image: "/work/relief-varaha.jpg",
-    alt: "Deep-carved marble relief of a lion-headed figure",
-    title: "Lion-headed figure, deep relief",
+    alt: "Marble relief of two figures seated on a swing beneath carved foliage, with a peacock at the right",
+    title: "Two-figure narrative relief",
     tag: "Relief",
   },
   {
     image: "/work/panel-unit.jpg",
-    alt: "Large white marble mandir unit with a carved arch and cabinetry",
-    title: "Mandir unit with cabinetry",
-    tag: "Unit",
+    alt: "Large white marble mandir with three arched bays, a scalloped parapet, cut-lattice panels and side shelves",
+    title: "Three-bay mandir with shelves",
+    tag: "Mandir",
   },
   {
     image: "/work/kiosk-outdoor.jpg",
@@ -199,21 +199,21 @@ export const WORKS: readonly { image: string; alt: string; title: string; tag: s
   },
   {
     image: "/work/carve-elephant.jpg",
-    alt: "Free-standing carved marble elephant",
-    title: "Free-standing elephant",
+    alt: "Pair of carved white marble elephants with raised trunks, each with a front foot on a carved log",
+    title: "Pair of elephants, trunks raised",
     tag: "Figure",
   },
   {
     image: "/work/carve-lotus.jpg",
-    alt: "Carved marble lotus medallion with scrolling leaves",
-    title: "Lotus medallion",
-    tag: "Medallion",
+    alt: "Carved white marble lotus flanked by two birds with plumed tails, on a wave-carved base",
+    title: "Lotus with a pair of birds",
+    tag: "Panel",
   },
   {
     image: "/work/carve-roundel.jpg",
-    alt: "Carved marble peacock-feather roundel with a central ring",
-    title: "Peacock-feather roundel",
-    tag: "Medallion",
+    alt: "Carved white marble peacock standing in front of a large openwork scroll roundel",
+    title: "Peacock before a carved roundel",
+    tag: "Figure",
   },
 ];
 

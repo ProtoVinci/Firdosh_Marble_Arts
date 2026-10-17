@@ -1,5 +1,11 @@
 # Firdosh Marble Arts — Website Redesign & Implementation Brief
 
+> **Superseded — historical record only.** This brief has been implemented.
+> The enquiry form it describes, and `src/components/EnquiryForm.tsx`, no
+> longer exist; contact is direct WhatsApp and phone. Do not follow this file
+> as current instructions. The current task specification is
+> `WEBSITE_AUDIT_AND_PERFORMANCE_FIX.md`, and the source code is the truth.
+
 **Purpose:** Give Claude Code a disciplined, source-grounded plan to make the existing website feel premium, client-focused, polished, and fast—without inventing business facts or making unrelated changes.
 
 **How to use this file:** Open the existing `Firdosh_Marble_Arts-main` project in Claude Code Desktop, paste the **Master Instruction** near the end of this file into the task, and tell Claude Code to follow this document phase by phase. Keep this file in the repository or provide it in the Claude Code conversation as project guidance.
