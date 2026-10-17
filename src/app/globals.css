@@ -22,15 +22,17 @@
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
 
   /* The hero sits in a 7-of-12 column, so its size has to track the
-     column, not the viewport. At 12vw the second line ("white marble.")
-     outgrew the track and ran underneath the photograph between about
-     1280px and 1600px. 7.6vw keeps the line inside the track at every
-     width from 390px to 2560px. */
-  --text-hero: clamp(2.75rem, 7.6vw, 9.75rem);
+     column, not the viewport. At 12vw the headline outgrew the track and
+     ran underneath the photograph between about 1280px and 1600px. The
+     headline now names the work ("Marble mandirs and hand-carved stone"),
+     which is longer than the old two-word lines, hence 6.4vw. */
+  --text-hero: clamp(2.6rem, 6.4vw, 8.25rem);
   --text-display: clamp(2.25rem, 6.4vw, 6.5rem);
   --text-title: clamp(1.9rem, 4.2vw, 3.75rem);
   --text-lead: clamp(1.0625rem, 1.55vw, 1.4rem);
-  --text-micro: 0.6875rem;
+  /* 12px. At 11px with wide tracking the labels were hard to read on a
+     phone, and most of them carried meaning (addresses, section names). */
+  --text-micro: 0.75rem;
 
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-in-out-quart: cubic-bezier(0.76, 0, 0.24, 1);
@@ -97,9 +99,15 @@
     color: var(--color-bone);
   }
 
+  /* 2px: a 1px clay ring was easy to lose against photographs. Dark
+     sections switch to sand, because clay on ink is below 3:1. */
   :focus-visible {
-    outline: 1px solid var(--color-clay);
+    outline: 2px solid var(--color-clay);
     outline-offset: 3px;
+  }
+
+  .on-dark :focus-visible {
+    outline-color: var(--color-sand);
   }
 
   /* Display type: tight, optical, never a default sans look. */
@@ -124,7 +132,7 @@
     font-family: var(--font-sans);
     font-size: var(--text-micro);
     font-weight: 500;
-    letter-spacing: 0.22em;
+    letter-spacing: 0.18em;
     text-transform: uppercase;
     line-height: 1;
   }
@@ -140,6 +148,85 @@
   .rule {
     height: 1px;
     background-color: color-mix(in oklab, var(--color-ink) 16%, transparent);
+  }
+}
+
+/* ------------------------------------------------------------------ *
+   Actions
+   One button system for every call to action. Sentence case and 15px so
+   a label reads at a glance; 52px tall so it is an easy thumb target.
+   `solid` is the primary action, `line` the secondary. The `-light`
+   variants sit on the ink sections.
+ * ------------------------------------------------------------------ */
+
+@layer components {
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    min-height: 3.25rem;
+    padding: 0.75rem 1.5rem;
+    border: 1px solid transparent;
+    font-family: var(--font-sans);
+    font-size: 0.9375rem;
+    font-weight: 500;
+    line-height: 1.2;
+    letter-spacing: 0.005em;
+    text-align: center;
+    transition:
+      background-color 0.25s ease,
+      border-color 0.25s ease,
+      color 0.25s ease;
+  }
+
+  .btn-solid {
+    background-color: var(--color-ink);
+    color: var(--color-bone);
+  }
+  .btn-solid:hover {
+    background-color: var(--color-clay);
+  }
+  .btn-solid:active {
+    background-color: var(--color-clay-deep);
+  }
+
+  .btn-line {
+    border-color: color-mix(in oklab, var(--color-ink) 30%, transparent);
+    color: var(--color-ink);
+  }
+  .btn-line:hover {
+    border-color: var(--color-ink);
+  }
+  .btn-line:active {
+    background-color: color-mix(in oklab, var(--color-ink) 6%, transparent);
+  }
+
+  .btn-solid-light {
+    background-color: var(--color-bone);
+    color: var(--color-ink);
+  }
+  .btn-solid-light:hover {
+    background-color: var(--color-sand);
+  }
+
+  .btn-line-light {
+    border-color: color-mix(in oklab, var(--color-bone) 40%, transparent);
+    color: var(--color-bone);
+  }
+  .btn-line-light:hover {
+    border-color: var(--color-bone);
+  }
+  .btn-line-light:active {
+    background-color: color-mix(in oklab, var(--color-bone) 8%, transparent);
+  }
+
+  .btn-arrow {
+    display: inline-block;
+    transition: transform 0.5s var(--ease-out-expo);
+  }
+  .btn:hover .btn-arrow {
+    transform: translateX(0.25rem);
   }
 }
 
@@ -180,23 +267,13 @@
     opacity: 1;
     transform: none;
   }
-
-  /* Above-the-fold entrance. Pure CSS so the hero paints as soon as the
-     stylesheet arrives instead of waiting for React to hydrate and flip a
-     data attribute. `backwards` holds the start state during the delay and
-     leaves no inline state behind afterwards. */
-  .hero-in {
-    animation: ks-hero-in 0.7s var(--ease-out-expo) backwards;
-    animation-delay: var(--reveal-delay, 0ms);
-  }
 }
 
-@keyframes ks-hero-in {
-  from {
-    opacity: 0;
-    transform: translate3d(0, 1rem, 0);
-  }
-}
+/* No entrance animation above the fold. The hero headline, lead and
+   contact buttons used to fade in from opacity 0 with a CSS animation; on a
+   throttled renderer that animation stalled and left the most important
+   text on the page invisible for seconds, and opacity-0 text also delays
+   Largest Contentful Paint. The hero now paints as soon as CSS arrives. */
 
 /* Clipped image wrapper — also reserves its background before decode.
    NOTE: do not put `content-visibility: auto` on any ancestor of a
@@ -275,34 +352,6 @@
 }
 
 /* ------------------------------------------------------------------ *
-   Field styling
- * ------------------------------------------------------------------ */
-
-/* `currentColor` so a field inherits whatever tone its section sets. */
-.field {
-  width: 100%;
-  background-color: transparent;
-  border: 0;
-  border-bottom: 1px solid color-mix(in oklab, currentColor 24%, transparent);
-  padding: 0.7rem 0;
-  font-family: var(--font-sans);
-  /* 16px: anything smaller makes iOS Safari zoom the page on focus. */
-  font-size: 1rem;
-  color: currentColor;
-  border-radius: 0;
-  transition: border-color 0.35s var(--ease-out-expo);
-}
-
-.field::placeholder {
-  color: color-mix(in oklab, currentColor 38%, transparent);
-}
-
-.field:focus {
-  outline: none;
-  border-bottom-color: var(--color-clay);
-}
-
-/* ------------------------------------------------------------------ *
    Motion preferences
  * ------------------------------------------------------------------ */
 
@@ -325,9 +374,5 @@
   .js [data-reveal-img] .media {
     opacity: 1 !important;
     transform: none !important;
-  }
-
-  .hero-in {
-    animation: none;
   }
 }

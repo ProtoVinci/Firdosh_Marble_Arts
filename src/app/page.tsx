@@ -1,6 +1,5 @@
 import Image from "next/image";
 import { ContactBar } from "@/components/ContactBar";
-import { EnquiryForm } from "@/components/EnquiryForm";
 import { Feature, Rail, Trio } from "@/components/Frames";
 import { Header } from "@/components/Header";
 import { InstallApp } from "@/components/InstallApp";
@@ -9,15 +8,16 @@ import { Mark } from "@/components/Mark";
 import { ScrollMotion } from "@/components/ScrollMotion";
 import { WorksIndex } from "@/components/WorksIndex";
 import {
-  FACTS,
   FOUNTAINS,
+  HERO,
   MANDIRS,
   MARQUEE,
-  MARQUEE_FOOTER,
+  NAV,
+  PHONE_HREF,
   STUDIO,
   TRADE,
+  WHATSAPP_HREF,
   WORKS,
-  whatsappLink,
 } from "@/lib/content";
 
 /**
@@ -36,6 +36,8 @@ const HERO_IMG = MANDIRS[0];
 const FEATURE_IMG = MANDIRS[1];
 const RAIL_MANDIRS = MANDIRS.slice(2);
 
+const PHONE = STUDIO.phones[0];
+
 export default function Page() {
   return (
     <>
@@ -48,47 +50,36 @@ export default function Page() {
         <section className="relative pt-[6rem] lg:pt-[8.5rem]">
           <div className={`${SHELL} grid gap-y-10 lg:items-center lg:grid-cols-12 lg:gap-x-10`}>
             <div className="lg:col-span-7">
-              <div className="hero-in flex items-center gap-3">
+              <div className="flex items-center gap-3">
                 <span className="h-px w-10 bg-clay" />
-                <span className="micro text-ink/55">Makrana · Rajasthan</span>
+                <span className="micro text-ink/65">{HERO.eyebrow}</span>
               </div>
 
-              <h1
-                className="hero-in display mt-8 text-hero"
-                style={{ "--reveal-delay": "60ms" } as React.CSSProperties}
-              >
-                Cut in
-                <br />
-                white&nbsp;
-                <em className="font-normal italic text-clay">marble.</em>
+              <h1 className="display mt-7 text-[clamp(2.6rem,8.4vw,5.5rem)] lg:text-hero">
+                Marble mandirs and{" "}
+                <em className="font-normal italic text-clay">
+                  <span className="whitespace-nowrap">hand-carved</span> stone.
+                </em>
               </h1>
 
-              <p
-                className="hero-in mt-9 max-w-[36ch] text-lead leading-[1.45] text-umber"
-                style={{ "--reveal-delay": "120ms" } as React.CSSProperties}
-              >
-                Marble suppliers, handcraft items and temple contractors. Mandirs,
-                jali screens, fountains and carved figures.
+              <p className="mt-8 max-w-[40ch] text-lead leading-[1.45] text-umber">
+                {HERO.lead}
               </p>
 
-              <div
-                className="hero-in mt-10 flex flex-wrap items-center gap-x-6 gap-y-3 sm:gap-x-8 sm:gap-y-4"
-                style={{ "--reveal-delay": "180ms" } as React.CSSProperties}
-              >
+              <div className="mt-9 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
                 <a
-                  href="#enquire"
-                  className="micro group inline-flex items-center gap-3 bg-ink px-5 py-4 text-bone transition-colors duration-300 hover:bg-clay sm:px-6"
+                  href={WHATSAPP_HREF}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="btn btn-solid"
                 >
-                  Request a quote
-                  <span
-                    aria-hidden
-                    className="inline-block transition-transform duration-500 ease-[var(--ease-out-expo)] group-hover:translate-x-1"
-                  >
+                  Chat on WhatsApp
+                  <span aria-hidden className="btn-arrow">
                     &rarr;
                   </span>
                 </a>
-                <a href="#mandirs" className="micro link-draw text-ink/70 hover:text-ink">
-                  See the mandirs
+                <a href={PHONE_HREF} className="btn btn-line">
+                  Call {PHONE}
                 </a>
               </div>
             </div>
@@ -103,27 +94,34 @@ export default function Page() {
             </div>
           </div>
 
-          <div className={`${SHELL} mt-14 lg:mt-28`}>
+          {/* The three lines of business, straight under the fold, so a
+              visitor knows what the workshop does before scrolling into
+              the photographs. */}
+          <div className={`${SHELL} mt-14 lg:mt-24`}>
             <div className="rule" />
-            <dl className="grid gap-y-8 pt-8 sm:grid-cols-3 sm:gap-x-10">
-              {FACTS.map((fact, i) => (
-                <div
-                  key={fact.label}
+            <h2 className="micro pt-8 text-ink/65">What we do</h2>
+            <ul className="mt-8 grid gap-y-8 sm:grid-cols-3 sm:gap-x-10">
+              {TRADE.map((item, i) => (
+                <li
+                  key={item.title}
                   data-reveal
                   style={{ "--reveal-delay": `${i * 70}ms` } as React.CSSProperties}
                 >
-                  <dt className="micro text-ink/45">{fact.label}</dt>
-                  <dd className="mt-2.5 text-[0.9375rem] leading-snug text-ink">
-                    {fact.value}
-                  </dd>
-                </div>
+                  <span className="numeral text-[1.5rem] text-clay">
+                    {String(i + 1).padStart(2, "0")}
+                  </span>
+                  <h3 className="display mt-2 text-[1.5rem] leading-tight">{item.title}</h3>
+                  <p className="mt-2 max-w-[34ch] text-[0.9375rem] leading-relaxed text-umber">
+                    {item.body}
+                  </p>
+                </li>
               ))}
-            </dl>
+            </ul>
           </div>
         </section>
 
         {/* ------------------------------------------------------- Marquee */}
-        <section className="mt-14 border-y border-ink/12 py-5 lg:mt-28">
+        <section aria-hidden className="mt-14 border-y border-ink/12 py-5 lg:mt-24">
           <Marquee
             items={MARQUEE}
             duration={55}
@@ -134,23 +132,23 @@ export default function Page() {
         {/* ------------------------------------------------- Mandirs (dark) */}
         <section
           id="mandirs"
-          className="scroll-mt-24 bg-ink pt-16 pb-16 text-bone lg:pt-32 lg:pb-32"
+          className="on-dark scroll-mt-24 bg-ink pt-16 pb-16 text-bone lg:pt-32 lg:pb-32"
         >
           <div className={SHELL}>
             <div className="flex flex-wrap items-end justify-between gap-8">
               <div>
-                <span className="micro text-bone/40" data-reveal>
+                <span className="micro text-bone/60" data-reveal>
                   Mandirs &amp; temples
                 </span>
                 <h2 className="display mt-5 text-display" data-reveal>
-                  Temple work,
+                  Temple work
                   <br />
-                  <em className="font-normal italic text-sand">fitted on site.</em>
+                  <em className="font-normal italic text-sand">in white marble.</em>
                 </h2>
               </div>
-              <p className="max-w-[32ch] text-sm leading-relaxed text-bone/50" data-reveal>
-                Freestanding mandirs, temple facades, carved doorways, jali screens
-                and chhatris — supplied and installed, not just delivered.
+              <p className="max-w-[34ch] text-[0.9375rem] leading-relaxed text-bone/70" data-reveal>
+                Freestanding mandirs, temple facades, jali screens and carved
+                arches. Scroll sideways for more.
               </p>
             </div>
           </div>
@@ -160,7 +158,7 @@ export default function Page() {
           </div>
 
           <div className="mt-5">
-            <Rail items={RAIL_MANDIRS} />
+            <Rail items={RAIL_MANDIRS} label="More mandirs and temple work" />
           </div>
         </section>
 
@@ -169,7 +167,7 @@ export default function Page() {
           <div className={SHELL}>
             <div className="flex flex-wrap items-end justify-between gap-8">
               <div>
-                <span className="micro text-ink/45" data-reveal>
+                <span className="micro text-ink/65" data-reveal>
                   Selected works
                 </span>
                 <h2 className="display mt-5 text-title" data-reveal>
@@ -180,10 +178,9 @@ export default function Page() {
                   </em>
                 </h2>
               </div>
-              <p className="max-w-[32ch] text-sm leading-relaxed text-umber" data-reveal>
-                Twelve pieces from the shop floor — pierced screens, narrative
-                reliefs, roundels and figures. Move down the list to look at
-                each one.
+              <p className="max-w-[34ch] text-[0.9375rem] leading-relaxed text-umber" data-reveal>
+                Twelve carved pieces — pierced screens, narrative reliefs,
+                roundels and figures. Move down the list to see each one.
               </p>
             </div>
 
@@ -198,18 +195,18 @@ export default function Page() {
           <div className={SHELL}>
             <div className="flex flex-wrap items-end justify-between gap-8">
               <div>
-                <span className="micro text-ink/45" data-reveal>
+                <span className="micro text-ink/65" data-reveal>
                   Water features
                 </span>
                 <h2 className="display mt-5 text-title" data-reveal>
-                  Courtyard
+                  Marble
                   <br />
                   <em className="font-normal italic">fountains.</em>
                 </h2>
               </div>
-              <p className="max-w-[32ch] text-sm leading-relaxed text-umber" data-reveal>
-                Tiered fountains, lotus bowls, wall fountains and carved figures
-                around the basin.
+              <p className="max-w-[34ch] text-[0.9375rem] leading-relaxed text-umber" data-reveal>
+                Pavilion and wall fountains in carved marble, with elephant and
+                peacock figures around the basin.
               </p>
             </div>
 
@@ -219,53 +216,67 @@ export default function Page() {
           </div>
         </section>
 
-        {/* ---------------------------------------------- The trade */}
-        <section className="bg-bone py-16 lg:py-32">
-          <div className={SHELL}>
-            <div className="rule" />
-            <div className="grid gap-y-10 pt-10 sm:grid-cols-3 sm:gap-x-12">
-              {TRADE.map((item, i) => (
-                <div
-                  key={item.title}
-                  data-reveal
-                  style={{ "--reveal-delay": `${i * 80}ms` } as React.CSSProperties}
-                >
-                  <span className="numeral text-[1.75rem] text-clay">
-                    {String(i + 1).padStart(2, "0")}
-                  </span>
-                  <h3 className="display mt-3 text-[1.5rem]">{item.title}</h3>
-                  <p className="mt-2 max-w-[30ch] text-sm leading-relaxed text-umber">
-                    {item.body}
-                  </p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
+        {/* ------------------------------------------------------- Contact */}
+        <section
+          id="contact"
+          aria-labelledby="contact-title"
+          className="on-dark relative scroll-mt-[4.5rem] bg-ink py-16 text-bone lg:py-32"
+        >
+          {/* Older links and the installed app's shortcuts point at these. */}
+          <span id="enquire" aria-hidden className="absolute top-0 scroll-mt-[4.5rem]" />
+          <span id="visit" aria-hidden className="absolute top-0 scroll-mt-[4.5rem]" />
 
-        {/* ------------------------------------------------------- Visit */}
-        <section id="visit" className="scroll-mt-24 bg-ink py-16 text-bone lg:py-32">
           <div className={SHELL}>
-            <div className="grid gap-y-10 lg:items-center lg:grid-cols-12 lg:gap-x-10">
-              <div className="lg:col-span-5">
-                <span className="micro text-bone/40" data-reveal>
-                  Visit
+            <div className="grid gap-y-14 lg:grid-cols-12 lg:gap-x-10">
+              <div className="lg:col-span-7">
+                <span className="micro text-bone/60" data-reveal>
+                  Contact
                 </span>
-                <h2 className="display mt-5 text-display" data-reveal>
-                  Find us
+                <h2 id="contact-title" className="display mt-5 text-display" data-reveal>
+                  Contact
                   <br />
-                  <em className="font-normal italic text-sand">in Makrana.</em>
+                  <em className="font-normal italic text-sand">{STUDIO.name}.</em>
                 </h2>
-                <p className="mt-8 max-w-[38ch] leading-relaxed text-bone/55" data-reveal>
-                  Makrana is the marble town. Come to the yard to see the work before
-                  you commit to anything.
+                <p className="mt-8 max-w-[42ch] text-lead leading-[1.5] text-bone/75" data-reveal>
+                  Call or message us about marble supply, handcraft items or
+                  temple work.
+                </p>
+
+                <div className="mt-10 flex flex-col gap-3 sm:flex-row sm:flex-wrap" data-reveal>
+                  <a
+                    href={WHATSAPP_HREF}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="btn btn-solid-light"
+                  >
+                    Chat on WhatsApp
+                    <span aria-hidden className="btn-arrow">
+                      &rarr;
+                    </span>
+                  </a>
+                  <a href={PHONE_HREF} className="btn btn-line-light">
+                    Call {PHONE}
+                  </a>
+                </div>
+                <p className="mt-5 max-w-[48ch] text-[0.875rem] leading-relaxed text-bone/60" data-reveal>
+                  WhatsApp opens with a short greeting already typed. You can
+                  change it, add photographs of your site, and press Send when
+                  you are ready.
                 </p>
               </div>
 
-              <div className="lg:col-span-7">
-                <dl className="grid gap-x-10 gap-y-10 sm:grid-cols-2">
+              <div className="lg:col-span-5 lg:pt-4">
+                <dl className="grid gap-y-8 border-t border-bone/15 pt-8">
                   <div data-reveal>
-                    <dt className="micro text-bone/40">Residence &amp; workshop</dt>
+                    <dt className="micro text-bone/60">Phone &amp; WhatsApp</dt>
+                    <dd className="mt-3">
+                      <a href={PHONE_HREF} className="link-draw text-[1.25rem] text-bone">
+                        {PHONE}
+                      </a>
+                    </dd>
+                  </div>
+                  <div data-reveal style={{ "--reveal-delay": "70ms" } as React.CSSProperties}>
+                    <dt className="micro text-bone/60">Residence</dt>
                     <dd className="mt-3 leading-relaxed">
                       <address className="not-italic text-bone/85">
                         {STUDIO.residence}
@@ -274,38 +285,19 @@ export default function Page() {
                       </address>
                     </dd>
                   </div>
-                  <div
-                    data-reveal
-                    style={{ "--reveal-delay": "70ms" } as React.CSSProperties}
-                  >
-                    <dt className="micro text-bone/40">Godown &amp; stone supply</dt>
+                  <div data-reveal style={{ "--reveal-delay": "140ms" } as React.CSSProperties}>
+                    <dt className="micro text-bone/60">Godown &amp; marble supply</dt>
                     <dd className="mt-3 leading-relaxed">
-                      <address className="not-italic text-bone/85">{STUDIO.godown}</address>
+                      <address className="not-italic text-bone/85">
+                        {STUDIO.godown}
+                        <br />
+                        {STUDIO.district}
+                      </address>
                     </dd>
                   </div>
-                  <div
-                    data-reveal
-                    style={{ "--reveal-delay": "140ms" } as React.CSSProperties}
-                  >
-                    <dt className="micro text-bone/40">Phone</dt>
-                    <dd className="mt-3 flex flex-col items-start">
-                      {STUDIO.phones.map((p) => (
-                        <a
-                          key={p}
-                          href={`tel:${p.replace(/\s/g, "")}`}
-                          className="link-draw text-bone"
-                        >
-                          {p}
-                        </a>
-                      ))}
-                    </dd>
-                  </div>
-                  <div
-                    data-reveal
-                    style={{ "--reveal-delay": "210ms" } as React.CSSProperties}
-                  >
-                    <dt className="micro text-bone/40">GSTIN</dt>
-                    <dd className="numeral mt-3 text-[1.75rem] text-bone/85">
+                  <div data-reveal style={{ "--reveal-delay": "210ms" } as React.CSSProperties}>
+                    <dt className="micro text-bone/60">GSTIN</dt>
+                    <dd className="mt-3 text-[0.9375rem] tracking-[0.06em] text-bone/85 tabular-nums">
                       {STUDIO.gstin}
                     </dd>
                   </div>
@@ -314,95 +306,31 @@ export default function Page() {
             </div>
           </div>
         </section>
-
-        {/* ----------------------------------------------------- Enquire */}
-        <section
-          id="enquire"
-          className="scroll-mt-24 bg-shell py-16 lg:py-32"
-        >
-          <div className={SHELL}>
-            <div className="grid gap-y-12 lg:grid-cols-12 lg:gap-x-10">
-              <div className="lg:col-span-5">
-                <span className="micro text-ink/45" data-reveal>
-                  Enquiries
-                </span>
-                <h2 className="display mt-5 text-display" data-reveal>
-                  Tell us
-                  <br />
-                  <em className="font-normal italic text-clay">about the space.</em>
-                </h2>
-                <p className="mt-8 max-w-[38ch] leading-relaxed text-umber" data-reveal>
-                  The more you tell us about where it will go, the more useful our
-                  first reply will be. Site photographs are always welcome.
-                </p>
-
-                <div className="mt-12 flex flex-col items-start gap-1 text-ink/60">
-                  <span className="micro mb-4 text-ink/40">Prefer to call?</span>
-                  {STUDIO.phones.map((p) => (
-                    <a
-                      key={p}
-                      href={`tel:${p.replace(/\s/g, "")}`}
-                      className="link-draw text-[1.125rem] text-ink"
-                    >
-                      {p}
-                    </a>
-                  ))}
-                  <a
-                    href={whatsappLink()}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="micro link-draw mt-3 text-ink/70 hover:text-ink"
-                  >
-                    Message on WhatsApp
-                  </a>
-                </div>
-              </div>
-
-              <div className="lg:col-span-7 lg:pt-16">
-                <EnquiryForm tone="light" />
-              </div>
-            </div>
-          </div>
-        </section>
       </main>
 
       {/* ------------------------------------------------------ Footer */}
-      <footer className="border-t border-ink/12 bg-bone pt-16 pb-[calc(4rem+env(safe-area-inset-bottom))] lg:pb-0">
-        <Marquee
-          items={MARQUEE_FOOTER}
-          duration={46}
-          separator="·"
-          className="pb-12"
-          itemClassName="display text-[2rem] italic text-ink/70 sm:text-[2.75rem]"
-        />
-
+      {/* Bottom padding clears the fixed contact bar below `lg`. */}
+      <footer className="bg-bone pt-12 pb-[calc(5.5rem+env(safe-area-inset-bottom))] lg:pt-16 lg:pb-0">
         <div className={`${SHELL} pb-12`}>
-          <div className="rule" />
-          <div className="flex flex-wrap items-start justify-between gap-x-10 gap-y-8 pt-10">
+          <div className="flex flex-wrap items-start justify-between gap-x-10 gap-y-8">
             <div className="flex items-center gap-2.5">
               <Mark className="h-7 w-7 text-clay" />
               <span className="flex flex-col leading-none">
                 <span className="font-[family-name:var(--font-display)] text-lg">
                   {STUDIO.name}
                 </span>
-                <span className="micro mt-1.5 max-w-[44ch] text-ink/45">
+                <span className="mt-1.5 max-w-[44ch] text-[0.8125rem] leading-snug text-ink/65">
                   {STUDIO.tagline}
                 </span>
               </span>
             </div>
 
-            <nav className="flex flex-wrap gap-x-8 gap-y-2">
-              {[
-                { label: "Mandirs", href: "#mandirs" },
-                { label: "Works", href: "#works" },
-                { label: "Fountains", href: "#fountains" },
-                { label: "Visit", href: "#visit" },
-                { label: "Enquire", href: "#enquire" },
-              ].map((item) => (
+            <nav aria-label="Footer" className="flex flex-wrap gap-x-8 gap-y-2">
+              {NAV.map((item) => (
                 <a
-                  key={item.label}
+                  key={item.href}
                   href={item.href}
-                  className="micro link-draw text-ink/60 hover:text-ink"
+                  className="micro link-draw py-2 text-ink/70 hover:text-ink"
                 >
                   {item.label}
                 </a>
@@ -410,13 +338,14 @@ export default function Page() {
             </nav>
           </div>
 
-          <div className="mt-10 flex flex-wrap items-baseline justify-between gap-x-8 gap-y-2">
-            <p className="text-[0.75rem] text-ink/35">
+          <div className="rule mt-10" />
+          <div className="mt-6 flex flex-wrap items-baseline justify-between gap-x-8 gap-y-2">
+            <p className="text-[0.8125rem] text-ink/65">
               &copy; {new Date().getFullYear()} {STUDIO.name}. {STUDIO.location}.
             </p>
-            <p className="micro text-ink/30">GSTIN {STUDIO.gstin}</p>
+            <p className="text-[0.8125rem] text-ink/65 tabular-nums">GSTIN {STUDIO.gstin}</p>
           </div>
-          <InstallApp className="mt-6 text-ink/60 hover:text-ink" />
+          <InstallApp className="mt-4 text-ink/65 hover:text-ink" />
         </div>
       </footer>
     </>

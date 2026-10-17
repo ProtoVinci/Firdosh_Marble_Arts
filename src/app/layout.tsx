@@ -33,7 +33,7 @@ export const metadata: Metadata = {
     template: "%s — Firdosh Marble Arts",
   },
   description:
-    "Marble suppliers, handcraft items and temple contractors in Makrana, Rajasthan. Fountains, wall panels, jali screens and carved figures.",
+    "Marble suppliers, handcraft items and temple contractors in Makrana, Rajasthan. Marble mandirs, jali screens, fountains, wall panels and carved figures.",
   keywords: [
     "Makrana marble supplier",
     "marble fountains Rajasthan",

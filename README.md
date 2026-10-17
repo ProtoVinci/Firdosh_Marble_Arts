@@ -102,10 +102,11 @@ Six things were deliberately done to keep it smooth:
 - **Works viewer keeps visited frames mounted** and loads two rows ahead, so
   moving up and down the list never flashes blank.
 - **Marquees pause while off screen.**
-- **The enquiry form hands off to WhatsApp** (the only channel on the
-  invoice) instead of discarding the message. Replace `onSubmit` in
-  `EnquiryForm.tsx` with a real endpoint once an inbox exists.
-- **Mobile call / WhatsApp / quote bar** (`ContactBar.tsx`).
+- **No enquiry form.** Contact is direct: every "Chat on WhatsApp" button
+  uses `WHATSAPP_HREF` (a `wa.me` link with a short greeting typed in), and
+  every call button uses `PHONE_HREF`, both from `src/lib/content.ts`. The
+  site never says a message was sent — WhatsApp only opens a draft.
+- **Mobile Call / WhatsApp bar** (`ContactBar.tsx`).
 
 Dev mode (`npm run dev`) is always much slower than production; judge speed
 on `startup.bat` option 1. Keeping the project inside OneDrive also slows
@@ -115,7 +116,7 @@ synced; a folder outside OneDrive (or excluding those two folders) is faster.
 ### Installable app (PWA)
 
 - `src/app/manifest.ts` — name, colours, standalone display, icons, and two
-  home-screen shortcuts (quote, visit).
+  home-screen shortcuts (contact, works).
 - `public/icons/*` and `src/app/apple-icon.png` — generated from the site
   mark by `node scripts/make-icons.cjs` (re-run it if the mark changes).
 - `public/sw.js` — hand-written service worker, no dependency. HTML is
@@ -130,7 +131,7 @@ synced; a folder outside OneDrive (or excluding those two folders) is faster.
   the browser offers it, or an Add-to-Home-Screen hint on iOS. It renders
   nothing once installed.
 - Mobile: `viewport-fit=cover` with safe-area padding (notches, home bar),
-  16 px form fields (stops iOS focus-zoom), coarse-pointer hit areas on text
+  coarse-pointer hit areas on text
   links, 44 px menu button. Checked for horizontal overflow at 320, 360, 390
   and 768 px.
 
@@ -344,7 +345,7 @@ src/
   app/
     layout.tsx      fonts, metadata, colour scheme
     page.tsx        every section, composed server-side
-    globals.css     design tokens, type styles, motion, form fields
+    globals.css     design tokens, type styles, buttons, motion
     icon.svg        favicon
   components/
     Frames.tsx      Feature / Rail / Trio image layouts
@@ -352,7 +353,6 @@ src/
     Header.tsx      sticky nav + mobile overlay        (client)
     ScrollMotion.tsx reveal on scroll, with a scroll sweep fallback (client)
     Marquee.tsx     seamless CSS ticker
-    EnquiryForm.tsx commission request form          (client)
     Mark.tsx        logo glyph
   lib/
     content.ts      ALL copy and image paths — the only file to edit for content
@@ -392,8 +392,6 @@ startup.bat         double-click to run the site locally (production or dev)
 - **Set the domain.** `metadataBase` is deliberately absent — see the comment in
   `layout.tsx`. Guessing it would bake a wrong absolute URL into every share
   card.
-- **Wire `EnquiryForm` `onSubmit`** to a real endpoint. It currently shows a
-  thank-you state without sending anything.
 - **Add the second phone number.** The invoice lists one that is cut off after
   9 digits; only `+91 99290 00106` is confirmed.
 - **Temple contracting is advertised but unphotographed.** It is on their
@@ -401,4 +399,4 @@ startup.bat         double-click to run the site locally (production or dev)
   Either get those photos or pull the claim — see `RESHOOT-NOTES.md`.
 - There is **no email address anywhere on the site** because none was supplied.
   Add one to `STUDIO` in `src/lib/content.ts` and wire it into `Header` and the
-  enquiry block.
+  contact section.

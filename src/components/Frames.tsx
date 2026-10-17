@@ -63,12 +63,16 @@ export function Rail({
   ratio = "4 / 5",
   gutter = "sm:px-8",
   priorityFirst = false,
+  label,
 }: {
   items: readonly Img[];
   width?: string;
   ratio?: string;
   gutter?: string;
   priorityFirst?: boolean;
+  /** Names the scroll region; with it the rail is focusable, so arrow
+   *  keys can scroll it without a mouse or trackpad. */
+  label?: string;
 }) {
   return (
     // The negative margin lets the rail bleed off the right edge; the clip
@@ -76,6 +80,9 @@ export function Rail({
     <div className="overflow-x-clip">
       <div className={gutter}>
         <div
+          role={label ? "region" : undefined}
+          aria-label={label}
+          tabIndex={label ? 0 : undefined}
           className={`-mr-5 flex snap-x snap-mandatory gap-4 overflow-x-auto pb-2 pl-5 sm:-mr-8 sm:pl-8 [&::-webkit-scrollbar]:hidden`}
           style={{ scrollbarWidth: "none" }}
         >

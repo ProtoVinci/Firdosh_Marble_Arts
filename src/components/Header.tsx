@@ -1,21 +1,18 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { STUDIO } from "@/lib/content";
+import { useEffect, useRef, useState } from "react";
+import { NAV, PHONE_HREF, STUDIO, WHATSAPP_HREF } from "@/lib/content";
 import { InstallApp } from "./InstallApp";
 import { Mark } from "./Mark";
 
-const NAV = [
-  { label: "Mandirs", href: "#mandirs" },
-  { label: "Works", href: "#works" },
-  { label: "Fountains", href: "#fountains" },
-  { label: "Visit", href: "#visit" },
-  { label: "Enquire", href: "#enquire" },
-];
+/** Everything behind the open mobile menu, made inert while it is open. */
+const BEHIND = "body > main, body > footer, body > [data-contact-bar]";
 
 export function Header() {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
+  const toggleRef = useRef<HTMLButtonElement | null>(null);
+  const firstLinkRef = useRef<HTMLAnchorElement | null>(null);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 24);
@@ -25,14 +22,23 @@ export function Header() {
   }, []);
 
   useEffect(() => {
-    document.body.style.overflow = open ? "hidden" : "";
     if (!open) return;
+    document.body.style.overflow = "hidden";
+    // Keyboard and screen-reader users stay inside the menu: the page
+    // behind it cannot be tabbed to or read while it is open.
+    const behind = [...document.querySelectorAll<HTMLElement>(BEHIND)];
+    behind.forEach((el) => (el.inert = true));
+    firstLinkRef.current?.focus();
+
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setOpen(false);
+      if (e.key !== "Escape") return;
+      setOpen(false);
+      toggleRef.current?.focus();
     };
     window.addEventListener("keydown", onKey);
     return () => {
       document.body.style.overflow = "";
+      behind.forEach((el) => (el.inert = false));
       window.removeEventListener("keydown", onKey);
     };
   }, [open]);
@@ -59,16 +65,16 @@ export function Header() {
               <span className="font-[family-name:var(--font-display)] text-[0.95rem] leading-none font-normal tracking-[-0.01em]">
                 {STUDIO.name}
               </span>
-              <span className="micro mt-1 text-ink/50">{STUDIO.descriptor}</span>
+              <span className="micro mt-1 text-[0.6875rem] text-ink/65">{STUDIO.descriptor}</span>
             </span>
           </a>
 
-          <nav className="hidden items-center gap-9 lg:flex">
+          <nav aria-label="Sections" className="hidden items-center gap-9 lg:flex">
             {NAV.map((item) => (
               <a
                 key={item.href}
                 href={item.href}
-                className="micro link-draw text-ink/70 transition-colors hover:text-ink"
+                className="micro link-draw text-ink/75 transition-colors hover:text-ink"
               >
                 {item.label}
               </a>
@@ -77,13 +83,16 @@ export function Header() {
 
           <div className="flex items-center gap-4">
             <a
-              href="#enquire"
-              className="micro hidden border border-ink/20 px-4 py-2.5 text-ink transition-colors duration-300 hover:border-clay hover:bg-clay hover:text-bone lg:inline-block"
+              href={WHATSAPP_HREF}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn btn-solid hidden min-h-11 px-5 py-2 text-[0.875rem] lg:inline-flex"
             >
-              Request a Quote
+              Chat on WhatsApp
             </a>
 
             <button
+              ref={toggleRef}
               type="button"
               onClick={() => setOpen((v) => !v)}
               aria-expanded={open}
@@ -108,21 +117,26 @@ export function Header() {
         </div>
       </header>
 
-      {/* Mobile overlay */}
+      {/* Mobile overlay. Visibility switches at once on open — while it is
+          still transitioning from `hidden` nothing inside can take focus —
+          and only waits for the fade on close. */}
       <div
         id="mobile-nav"
-        className={`fixed inset-0 z-40 bg-bone transition-[opacity,visibility] duration-500 ease-[var(--ease-out-expo)] lg:hidden ${
-          open ? "visible opacity-100" : "invisible opacity-0"
+        className={`fixed inset-0 z-40 bg-bone duration-500 ease-[var(--ease-out-expo)] lg:hidden ${
+          open
+            ? "visible opacity-100 transition-opacity"
+            : "invisible opacity-0 transition-[opacity,visibility]"
         }`}
       >
-        <div className="flex h-full flex-col justify-between gap-8 overflow-y-auto px-5 pt-24 pb-[max(2.5rem,env(safe-area-inset-bottom))] sm:px-8 sm:pt-28">
-          <nav className="flex flex-col">
+        <div className="flex h-full flex-col justify-between gap-10 overflow-y-auto px-5 pt-24 pb-[max(2.5rem,env(safe-area-inset-bottom))] sm:px-8 sm:pt-28">
+          <nav aria-label="Sections" className="flex flex-col">
             {NAV.map((item, i) => (
               <a
                 key={item.href}
+                ref={i === 0 ? firstLinkRef : undefined}
                 href={item.href}
                 onClick={() => setOpen(false)}
-                className="display border-b border-ink/12 py-4 text-[2.25rem] transition-all sm:py-5 sm:text-[2.6rem] duration-700 ease-[var(--ease-out-expo)]"
+                className="display border-b border-ink/12 py-4 text-[2.25rem] transition-[opacity,transform] duration-700 ease-[var(--ease-out-expo)] sm:py-5 sm:text-[2.6rem]"
                 style={{
                   transitionDelay: open ? `${120 + i * 70}ms` : "0ms",
                   transform: open ? "none" : "translateY(1.5rem)",
@@ -134,14 +148,22 @@ export function Header() {
             ))}
           </nav>
 
-          <div className="flex flex-col gap-1 text-ink/60">
-            <span className="micro mb-3 max-w-[30ch] text-ink/40">{STUDIO.residence}</span>
-            {STUDIO.phones.map((p) => (
-              <a key={p} href={`tel:${p.replace(/\s/g, "")}`} className="link-draw w-fit py-1">
-                {p}
-              </a>
-            ))}
-            <InstallApp className="mt-2 text-ink/70" />
+          <div className="flex flex-col gap-3">
+            <a
+              href={WHATSAPP_HREF}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn btn-solid"
+            >
+              Chat on WhatsApp
+            </a>
+            <a href={PHONE_HREF} className="btn btn-line">
+              Call {STUDIO.phones[0]}
+            </a>
+            <p className="mt-3 max-w-[34ch] text-[0.875rem] leading-snug text-ink/65">
+              {STUDIO.residence}
+            </p>
+            <InstallApp className="text-ink/70" />
           </div>
         </div>
       </div>

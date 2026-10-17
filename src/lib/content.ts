@@ -31,9 +31,32 @@ export function whatsappLink(message?: string) {
   return message ? `${base}?text=${encodeURIComponent(message)}` : base;
 }
 
+/**
+ * Opening line placed in the visitor's WhatsApp compose box. It is only a
+ * draft: nothing reaches the business until the visitor presses Send, so no
+ * copy on the site may say a message "has been sent".
+ */
+export const WHATSAPP_GREETING =
+  "Hello, I found Firdosh Marble Arts through your website and would like to enquire about marble work.";
+
+/** The one WhatsApp link every contact action on the page uses. */
+export const WHATSAPP_HREF = whatsappLink(WHATSAPP_GREETING);
+
+/**
+ * Section links, shared by the header, the mobile menu and the footer so
+ * the three can never disagree. `#enquire` and `#visit` still resolve (they
+ * now sit inside the contact section) for old links and installed apps.
+ */
+export const NAV = [
+  { label: "Mandirs", href: "#mandirs" },
+  { label: "Works", href: "#works" },
+  { label: "Fountains", href: "#fountains" },
+  { label: "Contact", href: "#contact" },
+] as const;
+
 export const HERO = {
   eyebrow: "Makrana · Rajasthan",
-  lead: "Marble suppliers, handcraft items and temple contractors. Mandirs, jali screens, fountains and carved figures.",
+  lead: "Marble suppliers, handcraft items and temple contractors in Makrana, Rajasthan. Mandirs, jali screens, fountains and carved figures.",
 } as const;
 
 /** `focus` is an object-position hint for sources taller than their frame. */
@@ -206,14 +229,8 @@ export const TRADE = [
   },
   {
     title: "Temple contractor",
-    body: "Mandirs, facades, jali screens and surrounds — supplied and fitted at the site.",
+    body: "Mandirs, temple facades, jali screens and carved surrounds.",
   },
-] as const;
-
-export const FACTS = [
-  { label: "Residence", value: "Near Minara Masjid, Makrana 341505" },
-  { label: "Godown", value: "Near Gurudwara, Bye Pass Road, Makrana 341505" },
-  { label: "GSTIN", value: "08QEMPK2026C1ZF" },
 ] as const;
 
 export const MARQUEE = [
@@ -222,15 +239,7 @@ export const MARQUEE = [
   "Marble supply",
   "Temple contracting",
   "Handcraft items",
-  "Courtyard fountains",
+  "Marble fountains",
   "Carved reliefs",
   "Makrana marble",
-] as const;
-
-export const MARQUEE_FOOTER = [
-  "Makrana, Rajasthan",
-  "Marble suppliers",
-  "Handcraft items",
-  "Temple contractor",
-  "GSTIN 08QEMPK2026C1ZF",
 ] as const;
