@@ -47,7 +47,7 @@ export default function Page() {
 
       <main id="top">
         {/* ---------------------------------------------------------- Hero */}
-        <section className="relative pt-[6rem] lg:pt-[8.5rem]">
+        <section className="relative pt-[6rem] lg:pt-[7rem]">
           <div className={`${SHELL} grid gap-y-10 lg:items-center lg:grid-cols-12 lg:gap-x-10`}>
             <div className="lg:col-span-7">
               <div className="flex items-center gap-3">
@@ -87,7 +87,12 @@ export default function Page() {
             <div className="lg:col-span-5">
               {/* The LCP image: no reveal, it paints with the first frame. */}
               <figure className="relative">
-                <div className="media relative aspect-4/5 w-full overflow-hidden bg-shell">
+                {/* On wide screens the plate is capped near the height of the
+                    text beside it (it grows with the window width, but is never
+                    taller than 40rem or the space under the header), so
+                    the two columns line up instead of the text floating
+                    down the middle of a very tall photograph. */}
+                <div className="media relative aspect-4/5 w-full overflow-hidden bg-shell lg:aspect-auto lg:h-[min(calc(100svh-9.5rem),max(34rem,33vw),40rem)] lg:min-h-[28rem]">
                   <HeroImage />
                 </div>
               </figure>

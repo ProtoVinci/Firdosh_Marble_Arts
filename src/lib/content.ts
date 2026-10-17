@@ -78,6 +78,8 @@ export const MANDIRS: readonly Framed[] = [
   {
     image: "/work/mandir-dusk.jpg",
     alt: "White marble mandir with carved jali screens against an evening sky",
+    // The hero plate is wider than tall on desktop; keep the finial in frame.
+    focus: "50% 15%",
   },
   {
     image: "/work/mandir-room.jpg",
